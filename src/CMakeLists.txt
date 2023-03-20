@@ -66,7 +66,7 @@ if(APPLE)
 endif()
 
 # libslvs
-add_library(slvs SHARED
+add_library(slvs STATIC
     solvespace.h
     platform/platform.h
     util.cpp
