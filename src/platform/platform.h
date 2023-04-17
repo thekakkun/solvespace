@@ -69,7 +69,7 @@ bool WriteFile(const Platform::Path &filename, const std::string &data);
 void RemoveFile(const Platform::Path &filename);
 
 // Resource loading function.
-const void *LoadResource(const std::string &name, size_t *size);
+// const void *LoadResource(const std::string &name, size_t *size);
 
 // Startup and command-line argument handling.
 std::vector<std::string> InitCli(int argc, char **argv);

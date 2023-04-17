@@ -11,7 +11,7 @@
 #endif
 #include "solvespace.h"
 #include "mimalloc.h"
-#include "config.h"
+// #include "config.h"
 #if defined(WIN32)
 // Conversely, include Microsoft headers after solvespace.h to avoid clashes.
 #   include <windows.h>
@@ -534,66 +534,66 @@ static const char *selfSymlink = "/proc/curproc/file";
 static const char *selfSymlink = "";
 #    endif
 
-static Platform::Path FindLocalResourceDir() {
-    // Find out the path to the running binary.
-    Platform::Path selfPath;
-    char *expandedSelfPath = realpath(selfSymlink, NULL);
-    if(expandedSelfPath != NULL) {
-        selfPath = Path::From(expandedSelfPath);
-    }
-    free(expandedSelfPath);
+// static Platform::Path FindLocalResourceDir() {
+//     // Find out the path to the running binary.
+//     Platform::Path selfPath;
+//     char *expandedSelfPath = realpath(selfSymlink, NULL);
+//     if(expandedSelfPath != NULL) {
+//         selfPath = Path::From(expandedSelfPath);
+//     }
+//     free(expandedSelfPath);
 
-    Platform::Path resourceDir;
-    if(selfPath.IsEmpty()) {
-        // We don't know how to find the local resource directory on this platform,
-        // so use the global one (by returning an empty string).
-        return Path::From(UNIX_DATADIR);
-    } else {
-        resourceDir = selfPath.Parent().Parent().Join("res");
-    }
+//     Platform::Path resourceDir;
+//     if(selfPath.IsEmpty()) {
+//         // We don't know how to find the local resource directory on this platform,
+//         // so use the global one (by returning an empty string).
+//         return Path::From(UNIX_DATADIR);
+//     } else {
+//         resourceDir = selfPath.Parent().Parent().Join("res");
+//     }
 
-    struct stat st;
-    if(stat(resourceDir.raw.c_str(), &st) != -1) {
-        // An executable-adjacent resource directory exists, good.
-        return resourceDir;
-    }
+//     struct stat st;
+//     if(stat(resourceDir.raw.c_str(), &st) != -1) {
+//         // An executable-adjacent resource directory exists, good.
+//         return resourceDir;
+//     }
 
-    resourceDir = selfPath.Parent().Parent().Join("share").Join("solvespace");
-    if(stat(resourceDir.raw.c_str(), &st) != -1) {
-        // A resource directory exists at a relative path, good.
-        return resourceDir;
-    }
+//     resourceDir = selfPath.Parent().Parent().Join("share").Join("solvespace");
+//     if(stat(resourceDir.raw.c_str(), &st) != -1) {
+//         // A resource directory exists at a relative path, good.
+//         return resourceDir;
+//     }
 
-    // No executable-adjacent resource directory; use the one from compile-time prefix.
-    return Path::From(UNIX_DATADIR);
-}
+//     // No executable-adjacent resource directory; use the one from compile-time prefix.
+//     return Path::From(UNIX_DATADIR);
+// }
 
-static Platform::Path ResourcePath(const std::string &name) {
-    static Platform::Path resourceDir;
-    if(resourceDir.IsEmpty()) {
-        resourceDir = FindLocalResourceDir();
-    }
+// static Platform::Path ResourcePath(const std::string &name) {
+//     static Platform::Path resourceDir;
+//     if(resourceDir.IsEmpty()) {
+//         resourceDir = FindLocalResourceDir();
+//     }
 
-    return resourceDir.Join(Path::FromPortable(name));
-}
+//     return resourceDir.Join(Path::FromPortable(name));
+// }
 
 #endif
 
 #if !defined(WIN32)
 
-const void *LoadResource(const std::string &name, size_t *size) {
-    static std::map<std::string, std::string> cache;
+// const void *LoadResource(const std::string &name, size_t *size) {
+//     static std::map<std::string, std::string> cache;
 
-    auto it = cache.find(name);
-    if(it == cache.end()) {
-        ssassert(ReadFile(ResourcePath(name), &cache[name]), "Cannot read resource");
-        it = cache.find(name);
-    }
+//     auto it = cache.find(name);
+//     if(it == cache.end()) {
+//         ssassert(ReadFile(ResourcePath(name), &cache[name]), "Cannot read resource");
+//         it = cache.find(name);
+//     }
 
-    const std::string &content = (*it).second;
-    *size = content.size();
-    return (const void*)content.data();
-}
+//     const std::string &content = (*it).second;
+//     *size = content.size();
+//     return (const void*)content.data();
+// }
 
 #endif
 
