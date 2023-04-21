@@ -459,80 +459,80 @@ bool WriteFile(const Platform::Path &filename, const std::string &data) {
 // Loading resources, on Windows.
 //-----------------------------------------------------------------------------
 
-#if defined(WIN32)
+// #if defined(WIN32)
 
-const void *LoadResource(const std::string &name, size_t *size) {
-    HRSRC hres = FindResourceW(NULL, Widen(name).c_str(), RT_RCDATA);
-    ssassert(hres != NULL, "Cannot find resource");
-    HGLOBAL res = ::LoadResource(NULL, hres);
-    ssassert(res != NULL, "Cannot load resource");
+// const void *LoadResource(const std::string &name, size_t *size) {
+//     HRSRC hres = FindResourceW(NULL, Widen(name).c_str(), RT_RCDATA);
+//     ssassert(hres != NULL, "Cannot find resource");
+//     HGLOBAL res = ::LoadResource(NULL, hres);
+//     ssassert(res != NULL, "Cannot load resource");
 
-    *size = SizeofResource(NULL, hres);
-    return LockResource(res);
-}
+//     *size = SizeofResource(NULL, hres);
+//     return LockResource(res);
+// }
 
-#endif
+// #endif
 
 //-----------------------------------------------------------------------------
 // Loading resources, on *nix.
 //-----------------------------------------------------------------------------
 
-#if defined(__APPLE__)
+// #if defined(__APPLE__)
 
-static Platform::Path PathFromCFURL(CFURLRef cfUrl) {
-    Path path;
-    CFStringRef cfPath = CFURLCopyFileSystemPath(cfUrl, kCFURLPOSIXPathStyle);
-    path.raw.resize(CFStringGetMaximumSizeOfFileSystemRepresentation(cfPath));
-    CFStringGetFileSystemRepresentation(cfPath, &path.raw[0], path.raw.size());
-    path.raw.erase(path.raw.find('\0'));
-    CFRelease(cfPath);
-    return path;
-}
+// static Platform::Path PathFromCFURL(CFURLRef cfUrl) {
+//     Path path;
+//     CFStringRef cfPath = CFURLCopyFileSystemPath(cfUrl, kCFURLPOSIXPathStyle);
+//     path.raw.resize(CFStringGetMaximumSizeOfFileSystemRepresentation(cfPath));
+//     CFStringGetFileSystemRepresentation(cfPath, &path.raw[0], path.raw.size());
+//     path.raw.erase(path.raw.find('\0'));
+//     CFRelease(cfPath);
+//     return path;
+// }
 
-static Platform::Path ResourcePath(const std::string &name) {
-    Path path;
+// static Platform::Path ResourcePath(const std::string &name) {
+//     Path path;
 
-    // First, try to get the URL from the bundle.
-    CFStringRef cfName = CFStringCreateWithCString(kCFAllocatorDefault, name.c_str(),
-                                                   kCFStringEncodingUTF8);
-    CFURLRef cfUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfName, NULL, NULL);
-    if(cfUrl != NULL) {
-        path = PathFromCFURL(cfUrl);
-        CFRelease(cfUrl);
-    }
-    CFRelease(cfName);
+//     // First, try to get the URL from the bundle.
+//     CFStringRef cfName = CFStringCreateWithCString(kCFAllocatorDefault, name.c_str(),
+//                                                    kCFStringEncodingUTF8);
+//     CFURLRef cfUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfName, NULL, NULL);
+//     if(cfUrl != NULL) {
+//         path = PathFromCFURL(cfUrl);
+//         CFRelease(cfUrl);
+//     }
+//     CFRelease(cfName);
 
-    if(!path.IsEmpty()) return path;
+//     if(!path.IsEmpty()) return path;
 
-    // If that failed, it means we aren't running from the bundle.
-    // Reference off the executable path, then.
-    cfUrl = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
-    if(cfUrl != NULL) {
-        path = PathFromCFURL(cfUrl).Parent().Parent().Join("res");
-        path = path.Join(Path::FromPortable(name));
-        CFRelease(cfUrl);
-    }
+//     // If that failed, it means we aren't running from the bundle.
+//     // Reference off the executable path, then.
+//     cfUrl = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
+//     if(cfUrl != NULL) {
+//         path = PathFromCFURL(cfUrl).Parent().Parent().Join("res");
+//         path = path.Join(Path::FromPortable(name));
+//         CFRelease(cfUrl);
+//     }
 
-    return path;
-}
+//     return path;
+// }
 
-#elif defined(__EMSCRIPTEN__)
+// #elif defined(__EMSCRIPTEN__)
 
-static Platform::Path ResourcePath(const std::string &name) {
-    return Path::From("res/" + name);
-}
+// static Platform::Path ResourcePath(const std::string &name) {
+//     return Path::From("res/" + name);
+// }
 
-#elif !defined(WIN32)
+// #elif !defined(WIN32)
 
-#    if defined(__linux__)
-static const char *selfSymlink = "/proc/self/exe";
-#    elif defined(__NetBSD__)
-static const char *selfSymlink = "/proc/curproc/exe";
-#    elif defined(__OpenBSD__) || defined(__FreeBSD__)
-static const char *selfSymlink = "/proc/curproc/file";
-#    else
-static const char *selfSymlink = "";
-#    endif
+// #    if defined(__linux__)
+// static const char *selfSymlink = "/proc/self/exe";
+// #    elif defined(__NetBSD__)
+// static const char *selfSymlink = "/proc/curproc/exe";
+// #    elif defined(__OpenBSD__) || defined(__FreeBSD__)
+// static const char *selfSymlink = "/proc/curproc/file";
+// #    else
+// static const char *selfSymlink = "";
+// #    endif
 
 // static Platform::Path FindLocalResourceDir() {
 //     // Find out the path to the running binary.
@@ -577,9 +577,9 @@ static const char *selfSymlink = "";
 //     return resourceDir.Join(Path::FromPortable(name));
 // }
 
-#endif
+// #endif
 
-#if !defined(WIN32)
+// #if !defined(WIN32)
 
 // const void *LoadResource(const std::string &name, size_t *size) {
 //     static std::map<std::string, std::string> cache;
@@ -595,7 +595,7 @@ static const char *selfSymlink = "";
 //     return (const void*)content.data();
 // }
 
-#endif
+// #endif
 
 //-----------------------------------------------------------------------------
 // Startup and command-line argument handling, on Windows.
